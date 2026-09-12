@@ -1,0 +1,15 @@
+
+# Tạo thư mục ~/devops/lesson1
+mkdir -p ~/devops/lesson1
+
+# Di chuyển vào thư mục vừa tạo
+cd ~/devops/lesson1
+
+# Tạo file hello_world.txt
+touch hello_world.txt
+
+# Mở file hello_world.txt bằng trình soạn thảo nano và viết vài dòng nội dung vào file
+nano hello_world.txt
+
+# Dùng lệnh cat để hiển thị nội dung file ra terminal
+cat hello_world.txt
