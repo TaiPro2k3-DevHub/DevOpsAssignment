@@ -1,0 +1,20 @@
+{
+  "name": "FastAPI Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/python:3-3.14-trixie",
+
+  // 1. Mở cổng 8000 để từ trình duyệt Windows bạn vào được http://localhost:8000
+  "forwardPorts": [8000],
+
+  // 2. Tự động cài Poetry và các thư viện trong pyproject.toml khi dựng máy
+  "postCreateCommand": "pip install poetry && poetry config virtualenvs.in-project true && poetry install",
+
+  // 3. Tự động cài extension gợi ý code Python vào chiếc máy Linux này
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  }
+}
