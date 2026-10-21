@@ -81,3 +81,29 @@ Khi có phiên bản build mới, xoá cache tại các Edge Location để ngư
 ```bash
 aws cloudfront create-invalidation --distribution-id <DISTRIBUTION_ID> --paths "/*"
 ```
+
+---
+
+## 5. Cấu hình Custom Domain & DNS với Cloudflare
+
+Để gắn subdomain tùy chỉnh (ví dụ: `f8-devops-nuxt-example.taiphanvan.id.vn`) vào CloudFront:
+
+### 5.1. Thêm Domain và xin SSL Certificate trên CloudFront
+1. Trong CloudFront Distribution, chọn **Add domain** (hoặc mục *Alternate domain name - CNAME*).
+2. Điền subdomain cần dùng: `f8-devops-nuxt-example.taiphanvan.id.vn`.
+3. Tạo chứng chỉ SSL thông qua **AWS Certificate Manager (ACM)**:
+   * **Lưu ý quan trọng**: Chứng chỉ SSL cho CloudFront **bắt buộc phải tạo ở Region `us-east-1` (N. Virginia)**.
+   * Phương thức xác thực: Chọn **DNS validation**.
+   * ACM sẽ cung cấp 1 cặp `CNAME Name` và `CNAME Value` để xác thực quyền sở hữu tên miền.
+
+### 5.2. Thêm 2 bản ghi DNS trên Cloudflare
+Truy cập trang quản trị DNS của domain trên Cloudflare và tạo **2 bản ghi CNAME**:
+
+| STT | Loại (Type) | Tên (Name) | Đích (Target) | Proxy status | Mục đích |
+| :---: | :---: | :--- | :--- | :---: | :--- |
+| **1** | `CNAME` | `_15c15037...` *(copy từ ACM)* | `_bb1684c...acm-validations.aws.` | 🔘 **DNS Only** *(Xám)* | Xác thực chủ sở hữu để AWS cấp SSL |
+| **2** | `CNAME` | `f8-devops-nuxt-example` | `<id>.cloudfront.net` *(Domain CloudFront)* | 🔘 **DNS Only** *(Xám)* | Điều hướng truy cập về CloudFront CDN |
+
+### 5.3. Lưu ý quan trọng: Tại sao phải chọn "DNS Only" (Đám mây màu xám)?
+* **Với bản ghi xác thực SSL (Bản ghi 1):** Nếu bật Proxy (đám mây màu cam), Cloudflare sẽ ẩn CNAME thật và chỉ trả về IP của Cloudflare. Khi đó AWS bot không tìm thấy bản ghi CNAME để xác minh, khiến chứng chỉ bị treo vĩnh viễn ở trạng thái *Pending Validation*.
+* **Với bản ghi điều hướng web (Bản ghi 2):** Bản thân CloudFront đã là một CDN toàn cầu hoàn chỉnh. Nếu bật thêm Proxy cam của Cloudflare sẽ gây ra hiện tượng **Double CDN** (Cloudflare đè lên CloudFront), dễ dẫn tới lỗi SSL Handshake (Error 525/526) và tăng độ trễ mạng.
