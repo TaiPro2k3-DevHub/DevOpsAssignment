@@ -1,0 +1,4 @@
+node_modules/
+deploy.zip
+*.zip
+.DS_Store
