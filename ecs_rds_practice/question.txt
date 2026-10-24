@@ -1,0 +1,5 @@
+Viết 1 API nhỏ có kết nối db
+
+Hãy deploy API lên ECS và DB lên RDS và kết nối chúng với nhau
+
+Yêu cầu: gửi link ECS (puhblic ip) và kiến trúc dự án (chụp ảnh)
