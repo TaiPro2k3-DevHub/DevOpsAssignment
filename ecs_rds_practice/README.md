@@ -218,3 +218,45 @@ docker compose down
    - Huy hiệu xanh: **`Connected successfully!`**
    - Tên Host RDS và tên Database đang kết nối.
    - Bạn có thể vào `http://<PUBLIC_IP>:8000/docs` để test thêm/xem dữ liệu qua Swagger UI.
+
+---
+
+## 6. Kết nối từ máy Local vào RDS Private qua AWS SSM (Không cần VPN)
+
+Vì RDS nằm trong Private Subnet và không mở cổng ra Internet, chúng ta sử dụng **AWS Systems Manager (SSM) Port Forwarding** thông qua 1 máy ảo Bastion siêu nhỏ:
+
+### Cách mở kết nối:
+Chỉ cần chạy lệnh:
+```bash
+make tunnel
+# Hoặc: ./tunnel-db.sh
+```
+
+### Thông số kết nối DBeaver / TablePlus / Navicat:
+- **Host:** `localhost`
+- **Port:** `5433`
+- **Database:** `app_notes_db`
+- **User:** `postgres`
+- **Password:** `<mật khẩu bạn đã đặt khi tạo RDS>`
+
+Sau khi dùng xong, nhấn `Ctrl + C` ở terminal để đóng đường hầm.
+
+---
+
+## 7. Các lệnh tiện ích với Makefile
+
+Dự án cung cấp sẵn `Makefile` hỗ trợ quản lý **version ngữ nghĩa** (`v1.0.1`, `v1.0.2`,...):
+
+```bash
+make help                       # Xem danh sách các lệnh
+make tunnel                     # Mở đường hầm SSM kết nối vào AWS RDS
+make dev                        # Chạy app ở local (Docker compose + hot-reload)
+make dev-logs                   # Xem logs app local
+make dev-down                   # Dừng container local
+
+# Build & Push (Mặc định dùng version khai báo trong Makefile, hiện tại là v1.0.1):
+make push-prod
+
+# Hoặc muốn tăng version khi deploy phiên bản mới:
+make push-prod VERSION=v1.0.2
+```
