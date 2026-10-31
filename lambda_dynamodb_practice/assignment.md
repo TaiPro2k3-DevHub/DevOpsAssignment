@@ -5,7 +5,7 @@
   https://i32gchv4zd.execute-api.ap-southeast-2.amazonaws.com/users
   ```
 
-- **Endpoint kiểm tra danh sách Users (`GET /users/{id}`)**:
+- **Endpoint kiểm tra chi tiết user (`GET /users/{id}`)**:
   ```text
   https://i32gchv4zd.execute-api.ap-southeast-2.amazonaws.com/users/u1
   ```
